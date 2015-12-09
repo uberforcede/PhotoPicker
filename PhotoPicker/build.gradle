@@ -1,47 +1,49 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
 def GROUP = "UF_Finance_Android"
 def POM_ARTIFACT_ID = "PhotoPicker"
 def VERSION_NAME = "1.0.0"
 
-apply plugin: 'com.android.library'
-apply plugin: 'maven'
-
 version = "1.0.0"
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
-  defaultConfig {
-    minSdkVersion 16
-    targetSdkVersion 23
-    versionCode 10
-    versionName "0.2.7"
-  }
-
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 10
+        versionName "0.2.7"
     }
-  }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  compile 'com.android.support:appcompat-v7:23.0.1'
-  compile 'com.android.support:recyclerview-v7:23.0.1'
-  compile 'com.nineoldandroids:library:2.4.0'
-  compile 'com.android.support:design:23.0.1'
-  compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.android.support:design:23.0.1'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
 }
 
+assembleRelease.finalizedBy(uploadArchives)
+
 uploadArchives {
-  repositories {
-    mavenDeployer {
-      pom.groupId = GROUP
-      pom.artifactId = POM_ARTIFACT_ID
-      pom.version = VERSION_NAME
-      repository(url: mavenLocal().url)
+    repositories {
+        mavenDeployer {
+            pom.groupId = GROUP
+            pom.artifactId = POM_ARTIFACT_ID
+            pom.version = VERSION_NAME
+            repository(url: mavenLocal().url)
+        }
     }
-  }
 }
