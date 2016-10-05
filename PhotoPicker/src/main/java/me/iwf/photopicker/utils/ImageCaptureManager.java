@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -50,17 +52,18 @@ public class ImageCaptureManager {
     return image;
   }
 
-
   public Intent dispatchTakePictureIntent() throws IOException {
     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     // Ensure that there's a camera activity to handle the intent
     if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
       // Create the File where the photo should go
-      File photoFile = createImageFile();
+      String authority = mContext.getApplicationInfo().packageName + ".provider";
+      File file = createImageFile();
+      Uri photoFile = FileProvider.getUriForFile(this.mContext, authority, file);
+
       // Continue only if the File was successfully created
       if (photoFile != null) {
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-            Uri.fromFile(photoFile));
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile);
       }
     }
     return takePictureIntent;
