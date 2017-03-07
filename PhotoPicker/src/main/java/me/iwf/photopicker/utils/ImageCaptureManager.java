@@ -2,6 +2,8 @@ package me.iwf.photopicker.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by donglua on 15/6/23.
@@ -65,6 +68,15 @@ public class ImageCaptureManager {
       if (photoFile != null) {
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile);
       }
+
+      // Fix SecurityException: Permission Denial: opening provider android.support.v4.content.FileProvider from ProcessRecord
+      // Solution found here: http://stackoverflow.com/questions/33650632/fileprovider-not-working-with-camera/33652695#33652695
+      List<ResolveInfo> resInfoList = mContext.getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+      for (ResolveInfo resolveInfo : resInfoList) {
+        String packageName = resolveInfo.activityInfo.packageName;
+        mContext.grantUriPermission(packageName, photoFile, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      }
+
     }
     return takePictureIntent;
   }
