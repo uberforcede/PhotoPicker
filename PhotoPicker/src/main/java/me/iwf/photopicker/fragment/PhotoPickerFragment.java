@@ -4,20 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +22,6 @@ import me.iwf.photopicker.adapter.PhotoGridAdapter;
 import me.iwf.photopicker.adapter.PopupDirectoryListAdapter;
 import me.iwf.photopicker.entity.Photo;
 import me.iwf.photopicker.entity.PhotoDirectory;
-import me.iwf.photopicker.event.OnPhotoClickListener;
 import me.iwf.photopicker.utils.ImageCaptureManager;
 import me.iwf.photopicker.utils.MediaStoreHelper;
 
@@ -66,8 +60,10 @@ public class PhotoPickerFragment extends Fragment {
                 new MediaStoreHelper.PhotosResultCallback() {
                     @Override
                     public void onResultCallback(List<PhotoDirectory> dirs) {
-                        directories.clear();
-                        directories.addAll(dirs);
+                        if (dirs.size() >= directories.size()) {
+                            directories.clear();
+                            directories.addAll(dirs);
+                        }
                         photoGridAdapter.setSelectedPhotoPaths(selected_photos);
                         photoGridAdapter.notifyDataSetChanged();
                         listAdapter.notifyDataSetChanged();
@@ -78,7 +74,7 @@ public class PhotoPickerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         setRetainInstance(true);
 
@@ -87,7 +83,7 @@ public class PhotoPickerFragment extends Fragment {
         photoGridAdapter = new PhotoGridAdapter(getActivity(), directories);
         listAdapter = new PopupDirectoryListAdapter(getActivity(), directories);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_photos);
+        RecyclerView recyclerView = rootView.findViewById(R.id.rv_photos);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3,
                 OrientationHelper.VERTICAL);
         layoutManager
@@ -154,7 +150,6 @@ public class PhotoPickerFragment extends Fragment {
     }
 
     public void initMenuWithPreselectedPhotos() {
-
         if (selected_photos != null && selected_photos.size() > 0) {
             int maxCount = ((PhotoPickerActivity) getActivity()).getMaxCount();
             ((PhotoPickerActivity) getActivity()).getMenuDoneItem().setEnabled(true);
